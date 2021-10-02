@@ -54,9 +54,45 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#555',
   },
+  item: {
+    paddingVertical: 17,
+    flexDirection: 'row',
+  },
+  itemOdd: {
+    backgroundColor: '#eee',
+  },
+  itemEven: {
+    backgroundColor: '#f9f9f9',
+  },
+  itemDone: {
+    backgroundColor: '#888',
+  },
+  itemText: {
+    marginLeft: 10,
+  },
+  doneText: {
+    color: '#fff',
+    textDecorationLine: 'line-through',
+  },
+  tickArea: {
+    marginHorizontal: 10,
+    transform: [{rotate: '45deg'}],
+    height: 14,
+    width: 8,
+  },
+  tick: {
+    borderBottomColor: '#fff',
+    borderRightColor: '#fff',
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
+  },
 });
 
-const list = [{text: '1'}, {text: '2'}, {text: '3'}];
+const list = [
+  {id: 1, text: 'to do 1'},
+  {id: 2, text: 'to do 2'},
+  {id: 3, text: 'to do 3'},
+];
 
 const App = () => {
   return (
@@ -76,15 +112,23 @@ const App = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {/* <FlatList
-         data={list}
-         renderItem={({item}) => (
-           <TouchableOpacity style={styles.item}>
-             <Text style={styles.itemText}>{item.text}</Text>
-           </TouchableOpacity>
-         )}
-         keyExtractor={item => item.text}
-       /> */}
+      <FlatList
+        data={list}
+        renderItem={({item, index, separators}) => {
+          const backgroundColorStyle =
+            index % 2 === 0 ? styles.itemEven : styles.itemOdd;
+          return (
+            <TouchableOpacity
+              style={[styles.item, backgroundColorStyle, styles.itemDone]}>
+              <View style={[styles.tickArea, styles.tick]}></View>
+              <Text style={[styles.itemText, styles.doneText]}>
+                {item.text}
+              </Text>
+            </TouchableOpacity>
+          );
+        }}
+        keyExtractor={item => item.id}
+      />
     </SafeAreaView>
   );
 };
