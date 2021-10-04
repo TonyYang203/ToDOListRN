@@ -88,49 +88,137 @@ const styles = StyleSheet.create({
   },
 });
 
-const list = [
-  {id: 1, text: 'to do 1'},
-  {id: 2, text: 'to do 2'},
-  {id: 3, text: 'to do 3'},
-];
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filterKey: '',
+      inputValue: '',
+      list: [],
+    };
+  }
 
-const App = () => {
-  return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.title}>My To Do List</Text>
-        <TextInput style={styles.input} />
-        <View style={styles.buttonGroup}>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Add</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Search</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Complete All</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <FlatList
-        data={list}
-        renderItem={({item, index, separators}) => {
-          const backgroundColorStyle =
-            index % 2 === 0 ? styles.itemEven : styles.itemOdd;
-          return (
+  onInputChange = text => {
+    this.setState(() => {
+      return {
+        inputValue: text,
+      };
+    });
+  };
+
+  createToDoItem = () => {
+    const {inputValue, list} = this.state;
+
+    const item = {
+      id: new Date().getTime(),
+      text: inputValue,
+      status: 'not done',
+    };
+
+    const newList = [...list, item];
+
+    this.setState(() => {
+      return {
+        inputValue: '',
+        list: newList,
+      };
+    });
+  };
+
+  changeItemStatus = id => () => {
+    const {list} = this.state;
+    const index = list.findIndex(item => item.id === id);
+
+    const nowItem = list[index];
+
+    const newStatus = nowItem.status === 'done' ? 'not done' : 'done';
+
+    list[index] = {
+      ...nowItem,
+      status: newStatus,
+    };
+
+    this.setState(() => {
+      return {
+        list: [...list],
+      };
+    });
+  };
+
+  searchList = () => {
+    this.setState(state => {
+      return {
+        filterKey: state.inputValue,
+      };
+    });
+  };
+
+  handleCompleteAll = () => {
+    this.setState(state => {
+      return {
+        list: state.list.map(item => {
+          return {
+            ...item,
+            status: 'done',
+          };
+        }),
+      };
+    });
+  };
+
+  render() {
+    const {list, inputValue, filterKey} = this.state;
+    return (
+      <SafeAreaView style={styles.root}>
+        <View style={styles.header}>
+          <Text style={styles.title}>My To Do List</Text>
+          <TextInput
+            style={styles.input}
+            value={inputValue}
+            onChangeText={this.onInputChange}
+          />
+          <View style={styles.buttonGroup}>
             <TouchableOpacity
-              style={[styles.item, backgroundColorStyle, styles.itemDone]}>
-              <View style={[styles.tickArea, styles.tick]}></View>
-              <Text style={[styles.itemText, styles.doneText]}>
-                {item.text}
-              </Text>
+              style={styles.button}
+              onPress={this.createToDoItem}>
+              <Text style={styles.buttonText}>Add</Text>
             </TouchableOpacity>
-          );
-        }}
-        keyExtractor={item => item.id}
-      />
-    </SafeAreaView>
-  );
-};
+            <TouchableOpacity style={styles.button} onPress={this.searchList}>
+              <Text style={styles.buttonText}>Search</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={this.handleCompleteAll}>
+              <Text style={styles.buttonText}>Complete All</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <FlatList
+          data={list.filter(item => item.text.includes(filterKey))}
+          renderItem={({item, index, separators}) => {
+            const backgroundColorStyle =
+              index % 2 === 0 ? styles.itemEven : styles.itemOdd;
+            const isDone = item.status === 'done';
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.item,
+                  backgroundColorStyle,
+                  isDone && styles.itemDone,
+                ]}
+                onPress={this.changeItemStatus(item.id)}>
+                <View style={[styles.tickArea, isDone && styles.tick]}></View>
+                <Text style={[styles.itemText, isDone && styles.doneText]}>
+                  {item.text}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
+          keyExtractor={item => item.id}
+        />
+      </SafeAreaView>
+    );
+  }
+}
 
 export default App;
