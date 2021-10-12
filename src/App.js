@@ -16,6 +16,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import FeatureButton from './components/FeatureButton';
+import Header from './components/Header';
+import ToDoItem from './components/ToDoItem';
 
 const styles = StyleSheet.create({
   root: {},
@@ -88,49 +91,105 @@ const styles = StyleSheet.create({
   },
 });
 
-const list = [
-  {id: 1, text: 'to do 1'},
-  {id: 2, text: 'to do 2'},
-  {id: 3, text: 'to do 3'},
-];
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filterKey: '',
+      inputValue: '',
+      list: [],
+    };
+  }
 
-const App = () => {
-  return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.title}>My To Do List</Text>
-        <TextInput style={styles.input} />
-        <View style={styles.buttonGroup}>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Add</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Search</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Complete All</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <FlatList
-        data={list}
-        renderItem={({item, index, separators}) => {
-          const backgroundColorStyle =
-            index % 2 === 0 ? styles.itemEven : styles.itemOdd;
-          return (
-            <TouchableOpacity
-              style={[styles.item, backgroundColorStyle, styles.itemDone]}>
-              <View style={[styles.tickArea, styles.tick]}></View>
-              <Text style={[styles.itemText, styles.doneText]}>
-                {item.text}
-              </Text>
-            </TouchableOpacity>
-          );
-        }}
-        keyExtractor={item => item.id}
-      />
-    </SafeAreaView>
-  );
-};
+  onInputChange = text => {
+    this.setState(() => {
+      return {
+        inputValue: text,
+      };
+    });
+  };
+
+  createToDoItem = item => {
+    const {list} = this.state;
+
+    const newList = [...list, item];
+
+    this.setState(() => {
+      return {
+        list: newList,
+      };
+    });
+  };
+
+  changeItemStatus = id => () => {
+    const {list} = this.state;
+    const index = list.findIndex(item => item.id === id);
+
+    const nowItem = list[index];
+
+    const newStatus = nowItem.status === 'done' ? 'not done' : 'done';
+
+    list[index] = {
+      ...nowItem,
+      status: newStatus,
+    };
+
+    this.setState(() => {
+      return {
+        list: [...list],
+      };
+    });
+  };
+
+  searchList = filterKey => {
+    this.setState(() => {
+      return {
+        filterKey,
+      };
+    });
+  };
+
+  handleCompleteAll = () => {
+    this.setState(state => {
+      return {
+        list: state.list.map(item => {
+          return {
+            ...item,
+            status: 'done',
+          };
+        }),
+      };
+    });
+  };
+
+  render() {
+    const {list, filterKey} = this.state;
+    return (
+      <SafeAreaView style={styles.root}>
+        <Header
+          searchList={this.searchList}
+          createToDoItem={this.createToDoItem}
+          handleCompleteAll={this.handleCompleteAll}
+        />
+        <FlatList
+          data={list.filter(item => item.text.includes(filterKey))}
+          renderItem={({item, index, separators}) => {
+            const isEven = index % 2 === 0;
+            const isDone = item.status === 'done';
+            return (
+              <ToDoItem
+                isEven={isEven}
+                isDone={isDone}
+                text={item.text}
+                onPress={this.changeItemStatus(item.id)}
+              />
+            );
+          }}
+          keyExtractor={item => item.id}
+        />
+      </SafeAreaView>
+    );
+  }
+}
 
 export default App;
