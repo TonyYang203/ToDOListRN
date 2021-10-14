@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import {connect} from 'react-redux';
-import {completeAllAction, insertToDoAction} from '../actions/creators';
+import {completeAllAction, insertToDoAction, insertToDoThunk} from '../actions/creators';
 import FeatureButton from './FeatureButton';
 
 const styles = StyleSheet.create({
@@ -62,7 +62,7 @@ export class Header extends Component {
       };
     });
 
-    this.props.insertToDoAction(item);
+    this.props.insertToDoThunk(item);
   };
 
   onSearchButtonPress = () => {
@@ -94,6 +94,7 @@ export class Header extends Component {
 
 const mapDispatchToProps = {
   insertToDoAction,
+  insertToDoThunk,
   completeAllAction,
 };
 
