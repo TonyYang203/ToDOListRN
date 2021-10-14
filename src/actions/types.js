@@ -1,0 +1,5 @@
+export const INSERT_TODO = 'INSERT_TODO';
+
+export const CHANGE_TODO_STATUS = 'CHANGE_TODO_STATUS';
+
+export const ALL_TODO_COMPLETE = 'ALL_TODO_COMPLETE';
