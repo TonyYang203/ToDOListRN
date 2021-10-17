@@ -5,10 +5,10 @@ import {connect} from 'react-redux';
 import {changeToDoStatusAction} from '../actions/creators';
 
 function ToDoList({todo, changeToDoStatusAction}) {
-  const {list} = todo;
+  const {list, searchKey} = todo;
   return (
     <FlatList
-      data={list}
+      data={list.filter(item => item.text.includes(searchKey))}
       renderItem={({item, index, separators}) => {
         const isEven = index % 2 === 0;
         const isDone = item.status === 'done';

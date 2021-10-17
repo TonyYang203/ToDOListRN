@@ -1,10 +1,15 @@
-import {ALL_TODO_COMPLETE, CHANGE_TODO_STATUS, INSERT_TODO} from './types';
+import {
+  ALL_TODO_COMPLETE,
+  CHANGE_TODO_STATUS,
+  INSERT_TODO,
+  SETTING_SEARCH_KEY,
+} from './types';
 
 const fakeAsync = () => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve();
-    }, 3000);
+    }, 1000);
   });
 };
 
@@ -34,5 +39,12 @@ export const changeToDoStatusAction = id => {
 export const completeAllAction = () => {
   return {
     type: ALL_TODO_COMPLETE,
+  };
+};
+
+export const settingSearchKeyAction = payload => {
+  return {
+    type: SETTING_SEARCH_KEY,
+    payload,
   };
 };

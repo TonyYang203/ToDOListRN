@@ -2,10 +2,12 @@ import {
   ALL_TODO_COMPLETE,
   CHANGE_TODO_STATUS,
   INSERT_TODO,
+  SETTING_SEARCH_KEY,
 } from '../actions/types';
 
 const initState = {
   list: [],
+  searchKey: '',
 };
 
 const insertToDo = (state, item) => {
@@ -54,6 +56,8 @@ export default function todoReducer(state = initState, {type, payload}) {
       return changeToDoStatus(state, payload);
     case ALL_TODO_COMPLETE:
       return allToDoComplete(state);
+    case SETTING_SEARCH_KEY:
+      return {...state, searchKey: payload.searchKey};
     default:
       return state;
   }

@@ -5,6 +5,7 @@ import {
   completeAllAction,
   insertToDoAction,
   insertToDoThunk,
+  settingSearchKeyAction,
 } from '../actions/creators';
 import FeatureButton from './FeatureButton';
 
@@ -70,7 +71,7 @@ export class Header extends Component {
   };
 
   onSearchButtonPress = () => {
-    this.props.searchList(this.state.inputValue);
+    this.props.settingSearchKeyAction({searchKey: this.state.inputValue});
   };
 
   render() {
@@ -88,7 +89,7 @@ export class Header extends Component {
           <FeatureButton text={'Search'} onPress={this.onSearchButtonPress} />
           <FeatureButton
             text={'Complete All'}
-            onPress={this.props.handleCompleteAll}
+            onPress={this.props.completeAllAction}
           />
         </View>
       </View>
@@ -100,6 +101,7 @@ const mapDispatchToProps = {
   insertToDoAction,
   insertToDoThunk,
   completeAllAction,
+  settingSearchKeyAction,
 };
 
 export default connect(null, mapDispatchToProps)(Header);
